@@ -1,5 +1,5 @@
 /**
- * Sample React Native App
+ * Sample React Native WelcomePage
  * https://github.com/facebook/react-native
  *
  * @format
@@ -24,7 +24,7 @@ export default class App extends Component<Props> {
     return (
       <View style={styles.container}>
         <Button 
-          title={'FlatListDemo'}
+          title={'FlatListDemo20190311'}
           onPress={() => {
             navigation.navigate("FlatListDemo");
           }}
