@@ -171,11 +171,11 @@ class PopularTab extends Component<Props> {
                     refreshControl={
                         <RefreshControl
                             title={"Loading"}
-                            titleColor={"red"}
+                            titleColor={"#678"}
                             colors={['blue', 'green']}
                             refreshing={store.isRefreshing}
                             onRefresh={() => this.loadData()}
-                            tintColor={'yellow'}
+                            tintColor={'#678'}
                         />
                     }
                     ListFooterComponent={() => this.genFooterIndicator()}

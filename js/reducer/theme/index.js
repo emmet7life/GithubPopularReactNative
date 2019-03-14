@@ -7,7 +7,7 @@ import Types from '../../action/types';
  *
  */
 const defaultState = {
-    tintColor: 'blue'
+    tintColor: '#099'
 };
 
 // themeReducer 主题改变数据修改器

@@ -23,7 +23,7 @@ class FavoritePage extends Component<Props> {
                 <Text style={styles.text}>FavoritePage</Text>
                 <Button title='改变主题色'
                         onPress={() => {
-                            this.props.onThemeChanged('#099');
+                            this.props.onThemeChanged('#678');
                         }}/>
             </View>
         );

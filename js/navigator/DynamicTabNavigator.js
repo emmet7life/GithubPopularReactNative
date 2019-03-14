@@ -32,7 +32,7 @@ class DynamicTabNavigator extends Component<Props> {
 
     _tabNavigator() {
         const {PopularPage, FavoritePage, TrendingPage, MyPage} = TABS;
-        const tabs = {PopularPage, FavoritePage, TrendingPage, MyPage};
+        const tabs = {PopularPage, TrendingPage, FavoritePage, MyPage};
         return createBottomTabNavigator(tabs, {
             tabBarComponent: props => {
                 return <TabBarComponent tintColor={this.props.tintColor} {...props} />
