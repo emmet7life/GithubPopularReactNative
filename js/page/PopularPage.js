@@ -67,6 +67,7 @@ export default class PopularPage extends Component<Props> {
                 scrollEnabled: true,
                 style: {
                     backgroundColor: THEME_COLOR,
+                    height: 30,// 解决初次进入时TAB样式异常的问题，步骤2
                 },
                 indicatorStyle: styles.indicatorStyle,
                 labelStyle: styles.labelStyle,
@@ -226,12 +227,13 @@ const PopularTabPage = connect(mapStateToProps, mapDispatchToProps)(PopularTab);
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#F5FCFF',
+        // justifyContent: 'center',
+        // alignItems: 'center',
+        // backgroundColor: '#F5FCFF',
     },
     tabStyle: {
-        minWidth: 50,
+        // minWidth: 50,// 解决初次进入时TAB样式异常的问题，步骤1
+        padding: 0,
     },
     indicatorStyle: {
         height: 2,
@@ -239,8 +241,10 @@ const styles = StyleSheet.create({
     },
     labelStyle: {
         fontSize: 12,
-        marginTop: 6,
-        marginBottom: 6,
+        // 解决初次进入时TAB样式异常的问题，步骤3
+        // marginTop: 6,
+        // marginBottom: 6,
+        margin: 0
     },
     text: {
         color: '#678',

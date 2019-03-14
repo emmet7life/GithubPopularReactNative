@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import HTMLView from 'react-native-htmlview';
 
 export default class TrendingItem extends Component {
 
@@ -22,24 +23,36 @@ export default class TrendingItem extends Component {
             />
         </TouchableOpacity>
 
+        let description = '<p>' + item.description + '</p>';
+
         return <TouchableOpacity
             onPress={this.props.onSelect}>
             <View style={styles.cell_container}>
                 <Text style={styles.title}>
                     {item.fullName}
                 </Text>
+                <HTMLView
+                    stylesheet={{
+                        p: styles.description,
+                        a: styles.description,
+                    }}
+                    value={description}
+                    onLinkLongPress={(url) => {
+                        alert(url);
+                    }}
+                />
                 <Text style={styles.description}>
-                    {item.description}
+                    {item.meta}
                 </Text>
                 <View style={styles.row}>
                     <View style={styles.row}>
-                        <Text>{`ForkCount:${item.forkCount}`}</Text>
-                        {/*<Image style={{height: 22, width: 22}}*/}
-                               {/*source={{uri: item.owner.avatar_url}}/>*/}
-                    </View>
-                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                        <Text>Star:</Text>
-                        <Text>{item.starCount}</Text>
+                        <Text>Built By:</Text>
+                        {item.contributors.map((result, i, arr) => {
+                            return <Image
+                                key={i}
+                                style={{height: 22, width: 22, marigin: 2}}
+                                source={{uri: arr[i]}}/>
+                        })}
                     </View>
                     {favoriteButton}
                 </View>

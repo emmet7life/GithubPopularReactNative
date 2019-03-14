@@ -67,6 +67,7 @@ export default class TrendingPage extends Component<Props> {
                 scrollEnabled: true,
                 style: {
                     backgroundColor: THEME_COLOR,
+                    height: 30,
                 },
                 indicatorStyle: styles.indicatorStyle,
                 labelStyle: styles.labelStyle,
@@ -166,7 +167,7 @@ class TrendingTab extends Component<Props> {
                 <FlatList
                     data={store.projectModes}
                     renderItem={itemData => this.renderItem(itemData)}
-                    keyExtractor={item => "" + item.id}
+                    keyExtractor={item => "" + (item.id || item.fullName)}
                     refreshControl={
                         <RefreshControl
                             title={"Loading"}
@@ -226,12 +227,13 @@ const TrendingTabPage = connect(mapStateToProps, mapDispatchToProps)(TrendingTab
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#F5FCFF',
+        // justifyContent: 'center',
+        // alignItems: 'center',
+        // backgroundColor: '#F5FCFF',
     },
     tabStyle: {
-        minWidth: 50,
+        // minWidth: 50,
+        padding: 0,
     },
     indicatorStyle: {
         height: 2,
@@ -239,8 +241,9 @@ const styles = StyleSheet.create({
     },
     labelStyle: {
         fontSize: 12,
-        marginTop: 6,
-        marginBottom: 6,
+        // marginTop: 6,
+        // marginBottom: 6,
+        margin: 0,
     },
     text: {
         color: '#678',
