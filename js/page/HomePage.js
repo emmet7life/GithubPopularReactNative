@@ -9,45 +9,45 @@
 
 // View
 import React, {Component} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-// Icon
-// import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-// import Ionicons from 'react-native-vector-icons/Ionicons';
-// import Entypo from 'react-native-vector-icons/Entypo';
-// // Page
-// import PopularPage from './PopularPage';
-// import TrendingPage from './TrendingPage';
-// import FavoritePage from './FavoritePage';
-// import MyPage from './MyPage';
-//
-// import {
-//     createBottomTabNavigator,
-//     createAppContainer
-// } from "react-navigation";
+import {BackHandler} from 'react-native';
+import {connect} from 'react-redux';
+import {NavigationActions} from 'react-navigation';
 // Page
 import DynamicTabNavigator from '../navigator/DynamicTabNavigator';
-
-import NavigationUtil from "../navigator/NavigationUtil";
+// Util
+import NavigationUtil from "../utils/NavigationUtil";
 
 type Props = {};
-export default class HomePage extends Component<Props> {
-  render() {
-      // const {navigation} = this.props;
-      NavigationUtil.navigation = this.props.navigation;
-      return <DynamicTabNavigator/>;
-  }
+
+class HomePage extends Component<Props> {
+
+    componentDidMount() {
+        BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
+    }
+
+    componentWillMount() {
+        BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
+    }
+
+    onBackPress = () => {
+        const {dispatch, nav} = this.props;
+        if (nav.routes[1].index == 0) {
+            // 不处理返回键
+            return false
+        }
+        dispatch(NavigationActions.back());
+        // 自己消化返回键
+        return true;
+    };
+
+    render() {
+        NavigationUtil.navigation = this.props.navigation;
+        return <DynamicTabNavigator/>;
+    }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  home: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  }
-});
+const mapStateToProps = state => {
+    return {nav: state.nav}
+}
+
+export default connect(mapStateToProps)(HomePage);

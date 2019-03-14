@@ -9,9 +9,13 @@
 
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, Button} from 'react-native';
+import {connect} from 'react-redux';
+import actions from '../action';
 
 type Props = {};
-export default class FavoritePage extends Component<Props> {
+
+// 收藏页
+class FavoritePage extends Component<Props> {
     render() {
         const {navigation} = this.props;
         return (
@@ -19,17 +23,22 @@ export default class FavoritePage extends Component<Props> {
                 <Text style={styles.text}>FavoritePage</Text>
                 <Button title='改变主题色'
                         onPress={() => {
-                            navigation.setParams({
-                                theme: {
-                                    tintColor: 'green',
-                                    updateTime: new Date().getTime()
-                                }
-                            });
+                            this.props.onThemeChanged('#099');
                         }}/>
             </View>
         );
     }
 }
+
+const mapStateToProps = state => ({});
+
+const mapDispatchToProps = dispatch => ({
+    onThemeChanged: tintColor => {
+        dispatch(actions.onThemeChange(tintColor));
+    }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(FavoritePage);
 
 const styles = StyleSheet.create({
     container: {

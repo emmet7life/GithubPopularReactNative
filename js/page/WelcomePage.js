@@ -9,7 +9,7 @@
 
 import React, {Component} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import NavigationUtil from '../navigator/NavigationUtil';
+import NavigationUtil from '../utils/NavigationUtil';
 
 type Props = {};
 export default class WelcomePage extends Component<Props> {
@@ -19,7 +19,7 @@ export default class WelcomePage extends Component<Props> {
         NavigationUtil.resetHomePage({
             navigation: this.props.navigation
         })
-    }, 600);
+    }, 200);
   }
 
   componentWillUnmount() {
