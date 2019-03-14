@@ -60,7 +60,8 @@ export const TABS = {
                     size={26}
                     style={{color: tintColor}}
                 />
-            )
+            ),
+            header: null
         }
     }
 }
