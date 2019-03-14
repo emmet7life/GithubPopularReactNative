@@ -27,6 +27,8 @@ const PAGE_SIZE = 10;
 const THEME_COLOR = '#678';
 
 type Props = {};
+
+// 最热页
 export default class PopularPage extends Component<Props> {
 
     constructor(props) {
