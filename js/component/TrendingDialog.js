@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
         paddingRight: 26
     },
     line: {
-        height: 0.3,
+        height: 1,
         backgroundColor: 'darkgray',
     },
 });

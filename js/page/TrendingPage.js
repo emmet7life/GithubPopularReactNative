@@ -88,7 +88,9 @@ export default class TrendingPage extends Component<Props> {
         this.setState({
             timeSpan: tab
         });
-        DeviceEventEmitter.emit(EventTypes.TIME_SPAN_CHANGE, tab);
+        setTimeout(() => {
+            DeviceEventEmitter.emit(EventTypes.TIME_SPAN_CHANGE, tab);
+        }, 500);
     }
 
     renderTrendingDialog() {
