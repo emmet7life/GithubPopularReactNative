@@ -119,9 +119,9 @@ class PopularTab extends Component<Props> {
         return <PopularItem
             item={item}
             onSelect={() => {
-                const text = `DEBUG: PopularItem ${item.full_name} was selected.`
-                console.log(text);
-                this.showToast(text)
+                NavigationUtil.goPage({
+                    projectModel: item,
+                }, 'DetailPage')
             }}
         />
     }

@@ -11,13 +11,13 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, Button, TouchableOpacity} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import NavigationBar from '../component/NavigationBar';
 // Redux
 import {connect} from 'react-redux';
 import actions from '../action';
 // Util
 import NavigationUtil from "../utils/NavigationUtil";
+import ViewUtil from "../utils/ViewUtil";
 // CONST
 const THEME_COLOR = '#678';
 
@@ -25,19 +25,6 @@ type Props = {};
 
 // 我的页
 class MyPage extends Component<Props> {
-
-    getLeftButton(callback) {
-        return <TouchableOpacity
-            style={{padding: 8, paddingLeft: 12}}
-            onPress={callback}
-        >
-            <Ionicons
-                name={'ios-arrow-back'}
-                size={26}
-                style={{color: 'white'}}
-            />
-        </TouchableOpacity>
-    }
 
     getRightButton() {
         return <View style={{flexDirection: 'row'}}>
@@ -57,6 +44,10 @@ class MyPage extends Component<Props> {
         </View>
     }
 
+    goBack() {
+        alert('点击了左侧按钮');
+    }
+
     render() {
         const statusBar = {
             backgroundColor: THEME_COLOR,
@@ -67,9 +58,7 @@ class MyPage extends Component<Props> {
             title={'我的'}
             statusBar={statusBar}
             style={{backgroundColor: THEME_COLOR}}
-            leftButton={this.getLeftButton(() => {
-                alert('点击了左侧按钮');
-            })}
+            leftButton={ViewUtil.getLeftBackButton(() => this.goBack())}
             rightButton={this.getRightButton()}
         />
 
