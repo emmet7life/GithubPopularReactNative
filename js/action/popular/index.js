@@ -11,18 +11,23 @@ import {handleRefreshError, handleRefrshData} from '../ActionUtil';
 export function onRefreshPopular(name, url, pageSize) {
     return dispatch => {
         // 正在请求
-        dispatch({type: Types.POPULAR_REFRESH, name: name});
-        let dataStore = new DataStore();
-        dataStore.fetchData(url)
-            .then(fetchedData => {
-                // 请求完成✅
-                handleRefrshData(Types.POPULAR_REFRESH_SUCCESS, dispatch, name, fetchedData, pageSize);
-            })
-            .catch(error => {
-                // 请求错误❎
-                console.log(error);
-                handleRefreshError(Types.POPULAR_REFRESH_FAIL, dispatch, name, error);
-            })
+        dispatch({
+            type: Types.POPULAR_REFRESH,
+            name: name
+        });
+        setTimeout(() => {
+            let dataStore = new DataStore();
+            dataStore.fetchData(url)
+                .then(fetchedData => {
+                    // 请求完成✅
+                    handleRefrshData(Types.POPULAR_REFRESH_SUCCESS, dispatch, name, fetchedData, pageSize);
+                })
+                .catch(error => {
+                    // 请求错误❎
+                    console.log(error);
+                    handleRefreshError(Types.POPULAR_REFRESH_FAIL, dispatch, name, error);
+                })
+        });
     }
 }
 
