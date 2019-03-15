@@ -71,40 +71,39 @@ export default class DataStore {
 
     /*获取网络数据*/
     fetchNetData(url, flag = STORAGE_FLAG.flag_popular) {
-        switch (flag) {
-            case STORAGE_FLAG.flag_trending:
-                new Trending().fetchTrending(url)
-                    .then(items => {
-                        if (!items) {
-                            throw new Error('fetchNetData fetched response not ok.');
-                        }
-                        const wrapData = this.saveData(url, items);
-                        resolve(wrapData);
-                    })
-                    .catch(error => {
-                        console.log('fetchNetData fetch error -> ', error);
-                        reject(error);
-                    })
-            default:
-                // 其余模块的请求
-                fetch(url)
-                    .then(response => {
-                        if (response.ok) {
-                            return response.json();
-                        }
-                        throw new Error('fetchNetData fetched response not ok.');
-                    })
-                    .then(json => {
-                        const wrapData = this.saveData(url, json);
-                        resolve(wrapData);
-                    })
-                    .catch(error => {
-                        console.log('fetchNetData fetch error -> ', error);
-                        reject(error);
-                    })
-        }
-
         return new Promise((resolve, reject) => {
+            switch (flag) {
+                case STORAGE_FLAG.flag_trending:
+                    new Trending().fetchTrending(url)
+                        .then(items => {
+                            if (!items) {
+                                throw new Error('fetchNetData fetched response not ok.');
+                            }
+                            const wrapData = this.saveData(url, items);
+                            resolve(wrapData);
+                        })
+                        .catch(error => {
+                            console.log('fetchNetData fetch error -> ', error);
+                            reject(error);
+                        })
+                default:
+                    // 其余模块的请求
+                    fetch(url)
+                        .then(response => {
+                            if (response.ok) {
+                                return response.json();
+                            }
+                            throw new Error('fetchNetData fetched response not ok.');
+                        })
+                        .then(json => {
+                            const wrapData = this.saveData(url, json);
+                            resolve(wrapData);
+                        })
+                        .catch(error => {
+                            console.log('fetchNetData fetch error -> ', error);
+                            reject(error);
+                        })
+            }
         })
     }
 
