@@ -191,9 +191,12 @@ class TrendingTab extends Component<Props> {
         return <TrendingItem
             item={item}
             onSelect={() => {
-                const text = `DEBUG: TrendingItem ${item.full_name} was selected.`
-                console.log(text);
-                this.showToast(text)
+                // const text = `DEBUG: TrendingItem ${item.full_name} was selected.`
+                // console.log(text);
+                // this.showToast(text)
+                NavigationUtil.goPage({
+                    pageModel: item,
+                }, 'DetailPage')
             }}
         />
     }
