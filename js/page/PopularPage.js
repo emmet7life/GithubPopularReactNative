@@ -20,11 +20,15 @@ import {
 import PopularItem from '../component/PopularItem';
 import Toast from 'react-native-easy-toast';
 import NavigationBar from '../component/NavigationBar';
+import FavoriteDao from "../expand/dao/FavoriteDao";
+import {STORAGE_FLAG} from '../expand/dao/DataStore';
+import FavoriteUtil from "../utils/FavoriteUtil";
 
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY = '&sort=stars';
 const PAGE_SIZE = 10;
 const THEME_COLOR = '#678';
+const favoriteDao = new FavoriteDao(STORAGE_FLAG.flag_popular);
 
 type Props = {};
 
@@ -101,12 +105,12 @@ class PopularTab extends Component<Props> {
         const url = this.genURL(this.name);
         if (loadMore) {
             // 加载更多
-            onLoadMorePopularData(this.name, ++store.pageIndex, PAGE_SIZE, store.items, () => {
+            onLoadMorePopularData(this.name, ++store.pageIndex, PAGE_SIZE, store.items, favoriteDao, () => {
                 this.showToast();
             });
         } else {
             // 下拉刷新
-            onRefreshPopularData(this.name, url, PAGE_SIZE);
+            onRefreshPopularData(this.name, url, PAGE_SIZE, favoriteDao);
         }
     }
 
@@ -117,12 +121,13 @@ class PopularTab extends Component<Props> {
     renderItem(data) {
         const item = data.item;
         return <PopularItem
-            item={item}
+            itemModel={item}
             onSelect={() => {
                 NavigationUtil.goPage({
-                    pageModel: item,
+                    pageModel: item.item,
                 }, 'DetailPage')
             }}
+            onFavorite={(item, isFavorite) => FavoriteUtil.onFavorite(favoriteDao, item, isFavorite, STORAGE_FLAG.flag_popular)}
         />
     }
 
@@ -167,7 +172,9 @@ class PopularTab extends Component<Props> {
                 <FlatList
                     data={store.projectModes}
                     renderItem={itemData => this.renderItem(itemData)}
-                    keyExtractor={item => "" + item.id}
+                    keyExtractor={item => {
+                        return "" + (item.item && item.item.id);
+                    }}
                     refreshControl={
                         <RefreshControl
                             title={"Loading"}
@@ -213,11 +220,11 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    onRefreshPopularData: (name, url, pageSize) => {
-        dispatch(actions.onRefreshPopular(name, url, pageSize));
+    onRefreshPopularData: (name, url, pageSize, favoriteDao) => {
+        dispatch(actions.onRefreshPopular(name, url, pageSize, favoriteDao));
     },
-    onLoadMorePopularData: (name, pageIndex, pageSize, items, callback) => {
-        dispatch(actions.onLoadMorePopular(name, pageIndex, pageSize, items, callback))
+    onLoadMorePopularData: (name, pageIndex, pageSize, items, favoriteDao, callback) => {
+        dispatch(actions.onLoadMorePopular(name, pageIndex, pageSize, items, favoriteDao, callback))
     }
 });
 

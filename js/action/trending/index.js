@@ -1,14 +1,15 @@
 import Types from '../types';
 import DataStore, {STORAGE_FLAG} from '../../expand/dao/DataStore';
-import {handleRefreshError, handleRefrshData} from '../ActionUtil';
+import {handleRefreshError, handleRefreshData, _projectModes} from '../ActionUtil';
 
 /*
  * 趋势模块 - 下拉刷新action
  * @name: 子模块名
  * @url: 请求地址
  * @pageSize: 一页请求多少条数据
+ * @favoriteDao: 收藏模块数据
  */
-export function onRefreshTrending(name, url, pageSize) {
+export function onRefreshTrending(name, url, pageSize, favoriteDao) {
     return dispatch => {
         // 正在请求
         dispatch({
@@ -20,7 +21,7 @@ export function onRefreshTrending(name, url, pageSize) {
             dataStore.fetchData(url, STORAGE_FLAG.flag_trending)
                 .then(fetchedData => {
                     // 请求完成✅
-                    handleRefrshData(Types.TRENDING_REFRESH_SUCCESS, dispatch, name, fetchedData, pageSize);
+                    handleRefreshData(Types.TRENDING_REFRESH_SUCCESS, dispatch, name, fetchedData, pageSize, favoriteDao);
                 })
                 .catch(error => {
                     // 请求错误❎
@@ -37,9 +38,10 @@ export function onRefreshTrending(name, url, pageSize) {
  * @pageIndex: 页码
  * @pageSize: 一页请求多少条数据
  * @dataArray: 原始数据
+ * @favoriteDao: 收藏模块数据
  * @callback: 回调，用于与组件通信
  */
-export function onLoadMoreTrending(name, pageIndex, pageSize, dataArray = [], callback) {
+export function onLoadMoreTrending(name, pageIndex, pageSize, dataArray = [], favoriteDao, callback) {
     return dispatch => {
         dispatch({
             type: Types.TRENDING_LOAD_MORE,
@@ -58,16 +60,19 @@ export function onLoadMoreTrending(name, pageIndex, pageSize, dataArray = [], ca
                     error: 'no more',
                     name: name,
                     pageIndex: --pageIndex,
-                    projectModes: dataArray,
+                    // projectModes: dataArray,
                 });
             } else {
                 // 还有更多可加载
                 const sliceLength = Math.min(pageIndex * pageSize, dataArray.length);
-                dispatch({
-                    type: Types.TRENDING_LOAD_MORE_SUCCESS,
-                    name,// or name: name
-                    pageIndex,// or pageIndex: pageIndex
-                    projectModes: dataArray.slice(0, sliceLength),
+                const fixedItems = dataArray.slice(0, sliceLength);
+                _projectModes(fixedItems, favoriteDao, projectModes => {
+                    dispatch({
+                        type: Types.TRENDING_LOAD_MORE_SUCCESS,
+                        name,// or name: name
+                        pageIndex,// or pageIndex: pageIndex
+                        projectModes: projectModes
+                    });
                 });
             }
         }, 500)
