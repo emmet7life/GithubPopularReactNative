@@ -14,6 +14,7 @@ import NavigationUtil from "../utils/NavigationUtil";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import NavigationBar from '../component/NavigationBar';
 import {WebView} from 'react-native-webview';
+import BackPressComponent from "../component/BackPressComponent";
 
 const THEME_COLOR = '#678';
 const TRENDING_PREFIX_URL = 'https://github.com/';
@@ -26,32 +27,43 @@ export default class DetailPage extends Component<Props> {
     constructor(props) {
         super(props);
         this.params = this.props.navigation.state.params;
-        const {projectModel} = this.params;
-        this.url = projectModel.html_url || (TRENDING_PREFIX_URL + projectModel.fullName);
-        const title = projectModel.full_name || projectModel.fullName;
+        const {pageModel} = this.params;
+        this.url = pageModel.html_url || (TRENDING_PREFIX_URL + pageModel.fullName);
+        const title = pageModel.full_name || pageModel.fullName;
         this.state = {
             title: title,
             url: this.url,
-            canBoback: false,
+            canGoBack: false,
         }
+        this.backPress = new BackPressComponent({backPress: () => this.onBackPress()});
     }
 
-    onBack() {
+    componentDidMount() {
+        this.backPress.componentDidMount();
+    }
+
+    componentWillMount() {
+        this.backPress.componentWillUnmount();
+    }
+
+    onBackPress = () => {
         if (this.state.canGoBack) {
             this.webView.goBack();
         } else {
             NavigationUtil.goBack(this.props.navigation);
         }
+        return true;
     }
 
     onFavoriteButtonClick() {
         alert('点击了收藏按钮');
     }
 
+    // WebView导航状态发送变更
     onNavigationStateChange(navState) {
         this.setState({
             canGoBack: navState.canGoBack,
-            url: navState.url,
+            url: navState.url,// 最新URL
         })
     }
 
@@ -77,7 +89,7 @@ export default class DetailPage extends Component<Props> {
             title={this.state.title}
             titleLayoutStyle={titleLayoutStyle}
             style={{backgroundColor: THEME_COLOR}}
-            leftButton={ViewUtil.getLeftBackButton(() => this.onBack())}
+            leftButton={ViewUtil.getLeftBackButton(() => this.onBackPress())}
             rightButton={this.renderRightButton()}
         />
 
