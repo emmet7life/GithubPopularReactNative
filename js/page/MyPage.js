@@ -61,6 +61,12 @@ class MyPage extends Component<Props> {
                 params.title = '教程';
                 params.url = 'https://coding.m.imooc.com/classindex.html?cid=89';
                 break;
+            case MORE_MENU.About:
+                RouteName = 'AboutPage';
+                break;
+            case MORE_MENU.About_Author:
+                RouteName = 'AboutMePage';
+                break;
         }
         if (RouteName) {
             NavigationUtil.goPage(params, RouteName);
