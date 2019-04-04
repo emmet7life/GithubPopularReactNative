@@ -5,13 +5,19 @@ import {
     createSwitchNavigator
 } from "react-navigation";
 
+// Page
 import WelcomePage from '../page/WelcomePage';
 import HomePage from '../page/HomePage';
 import DetailPage from '../page/DetailPage';
-import {connect} from 'react-redux';
-import {createReactNavigationReduxMiddleware, createReduxContainer} from 'react-navigation-redux-helpers';
+import WebViewPage from '../page/WebViewPage';
+
+// Demo Page
 import FetchDemoPage from "../page/FetchDemoPage";
 import DataStoreDemoPage from "../page/DataStoreDemoPage";
+
+import {connect} from 'react-redux';
+
+import {createReactNavigationReduxMiddleware, createReduxContainer} from 'react-navigation-redux-helpers';
 
 export const rootRouter = 'Init';// 设置根路由
 
@@ -37,6 +43,12 @@ const MainNavigator = createStackNavigator(
         },
         DetailPage: {
             screen: DetailPage,
+            navigationOptions: {
+                header: null
+            }
+        },
+        WebViewPage: {
+            screen: WebViewPage,
             navigationOptions: {
                 header: null
             }
