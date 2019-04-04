@@ -1,3 +1,11 @@
+/// 事件类型
 export default {
+    // 趋势->时间选择变化
     TIME_SPAN_CHANGE: 'EVENT_TYPE_TIME_SPAN_CHANGE',
+    // 底部状态栏TAB发生变更
+    BOTTOM_TAB_INDEX_CHANGE: 'BOTTOM_TAB_INDEX_CHANGE',
+    // 收藏->最热，数据发生变更
+    FAVORITE_POPULAR_DATA_CHANGE: 'FAVORITE_POPULAR_DATA_CHANGE',
+    // 收藏->趋势，数据发生变更
+    FAVORITE_TRENDING_DATA_CHANGE: 'FAVORITE_TRENDING_DATA_CHANGE',
 }

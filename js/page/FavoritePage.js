@@ -23,6 +23,8 @@ import NavigationBar from '../component/NavigationBar';
 import FavoriteDao from "../expand/dao/FavoriteDao";
 import {STORAGE_FLAG} from '../expand/dao/DataStore';
 import FavoriteUtil from "../utils/FavoriteUtil";
+import EventBus from 'react-native-event-bus';
+import EventTypes from "../utils/EventTypes";
 
 const THEME_COLOR = '#678';
 
@@ -91,11 +93,30 @@ class FavoriteTab extends Component<Props> {
 
     componentDidMount() {
         this.loadData(true);
+        EventBus.getInstance().addListener(EventTypes.BOTTOM_TAB_INDEX_CHANGE, this.listener = data => {
+            if (data.to == 2) {
+                this.loadData(false);
+            }
+        })
+    }
+
+    componentWillUnmount() {
+        EventBus.getInstance().removeListener(this.listener);
     }
 
     loadData(isShowLoading) {
         const {onLoadFavoriteData} = this.props;
         onLoadFavoriteData(this.name, isShowLoading);
+    }
+
+    onFavoriteChanged(item, isFavorite) {
+        FavoriteUtil.onFavorite(this.favoriteDao, item, isFavorite, this.name);
+        if (this.name === STORAGE_FLAG.flag_popular) {
+            EventBus.getInstance().fireEvent(EventTypes.FAVORITE_POPULAR_DATA_CHANGE);
+        } else if (this.name === STORAGE_FLAG.flag_trending) {
+            EventBus.getInstance().fireEvent(EventTypes.FAVORITE_TRENDING_DATA_CHANGE);
+        }
+        this.loadData(false);
     }
 
     renderItem(data) {
@@ -108,7 +129,7 @@ class FavoriteTab extends Component<Props> {
                     pageModel: item.item,
                 }, 'DetailPage')
             }}
-            onFavorite={(item, isFavorite) => FavoriteUtil.onFavorite(this.favoriteDao, item, isFavorite, this.name)}
+            onFavorite={(item, isFavorite) => this.onFavoriteChanged(item, isFavorite)}
         />
     }
 

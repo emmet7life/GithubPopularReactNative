@@ -100,6 +100,14 @@ export default function popularReducer(state = {}, action) {
                     isLoadingMore: false
                 }
             }
+        case Types.FLUSH_POPULAR_FAVORITE://刷新收藏状态
+            return {
+                ...state,
+                [action.name]: {
+                    ...(state[action.name] === undefined ? defaultState : state[action.name]),
+                    projectModes: action.projectModes,
+                }
+            };
         default:
             return state;
     }

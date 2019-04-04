@@ -23,6 +23,8 @@ import NavigationBar from '../component/NavigationBar';
 import FavoriteDao from "../expand/dao/FavoriteDao";
 import {STORAGE_FLAG} from '../expand/dao/DataStore';
 import FavoriteUtil from "../utils/FavoriteUtil";
+import EventBus from 'react-native-event-bus';
+import EventTypes from '../utils/EventTypes';
 
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY = '&sort=stars';
@@ -93,14 +95,29 @@ class PopularTab extends Component<Props> {
         super(props);
         const {tabLabel} = this.props;
         this.name = tabLabel;
+        this.isFavoriteChanged = false;
     }
 
     componentDidMount() {
         this.loadData();
+        EventBus.getInstance().addListener(EventTypes.FAVORITE_POPULAR_DATA_CHANGE, this.favoriteChangeListener = () => {
+            this.isFavoriteChanged = true;
+        });
+        EventBus.getInstance().addListener(EventTypes.BOTTOM_TAB_INDEX_CHANGE, this.bottomTabChangedListener = (data) => {
+            if (data.to === 0 && this.isFavoriteChanged) {
+                this.loadData(null, true);
+                this.isFavoriteChanged = false;
+            }
+        });
     }
 
-    loadData(loadMore) {
-        const {onRefreshPopularData, onLoadMorePopularData} = this.props;
+    componentWillUnmount() {
+        EventBus.getInstance().removeListener(this.favoriteChangeListener);
+        EventBus.getInstance().removeListener(this.bottomTabChangedListener);
+    }
+
+    loadData(loadMore, refreshFavorite) {
+        const {onRefreshPopularData, onLoadMorePopularData, onFlushPopularFavorite} = this.props;
         const store = this._store();
         const url = this.genURL(this.name);
         if (loadMore) {
@@ -108,6 +125,9 @@ class PopularTab extends Component<Props> {
             onLoadMorePopularData(this.name, ++store.pageIndex, PAGE_SIZE, store.items, favoriteDao, () => {
                 this.showToast();
             });
+        } else if (refreshFavorite) {
+            // 刷新收藏状态
+            onFlushPopularFavorite(this.name, store.pageIndex, PAGE_SIZE, store.items, favoriteDao);
         } else {
             // 下拉刷新
             onRefreshPopularData(this.name, url, PAGE_SIZE, favoriteDao);
@@ -225,6 +245,9 @@ const mapDispatchToProps = dispatch => ({
     },
     onLoadMorePopularData: (name, pageIndex, pageSize, items, favoriteDao, callback) => {
         dispatch(actions.onLoadMorePopular(name, pageIndex, pageSize, items, favoriteDao, callback))
+    },
+    onFlushPopularFavorite: (name, pageIndex, pageSize, items, favoriteDao) => {
+        dispatch(actions.onFlushPopularFavorite(name, pageIndex, pageSize, items, favoriteDao))
     }
 });
 

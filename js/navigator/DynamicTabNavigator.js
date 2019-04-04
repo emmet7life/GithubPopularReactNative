@@ -21,6 +21,8 @@ import NavigationUtil from "../utils/NavigationUtil";
 import ObjectUtils from '../utils/ObjectUtils';
 // TAB
 import {TABS} from './TABS';
+import EventTypes from "../utils/EventTypes";
+import EventBus from 'react-native-event-bus';
 
 type Props = {};
 class DynamicTabNavigator extends Component<Props> {
@@ -46,8 +48,18 @@ class DynamicTabNavigator extends Component<Props> {
             return <this.Container/>;
         }
         // 无则创建
-        this.Container = createAppContainer(this._tabNavigator());
-        return <this.Container/>;
+        const Tab = createAppContainer(this._tabNavigator());
+        this.Container = Tab;
+        return <Tab
+            // 底部导航栏TAB切换时触发
+            onNavigationStateChange={(prevState, nextState, action) => {
+                // 通过EventBus发送事件给监听者
+                EventBus.getInstance().fireEvent(EventTypes.BOTTOM_TAB_INDEX_CHANGE, {
+                    from: prevState.index,
+                    to: nextState.index
+                })
+            }}
+        />;
     }
 }
 

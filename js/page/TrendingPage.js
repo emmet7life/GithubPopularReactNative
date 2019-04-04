@@ -34,6 +34,7 @@ import EventTypes from "../utils/EventTypes";
 import {STORAGE_FLAG} from "../expand/dao/DataStore";
 import FavoriteDao from "../expand/dao/FavoriteDao";
 import FavoriteUtil from "../utils/FavoriteUtil";
+import EventBus from "react-native-event-bus";
 
 const URL = 'https://github.com/trending/';
 const PAGE_SIZE = 10;
@@ -155,6 +156,7 @@ class TrendingTab extends Component<Props> {
         const {tabLabel, timeSpan} = this.props;
         this.name = tabLabel;
         this.timeSpan = timeSpan;
+        this.isFavoriteChanged = false;
     }
 
     componentDidMount() {
@@ -163,16 +165,27 @@ class TrendingTab extends Component<Props> {
             this.timeSpan = timeSpan;
             this.loadData();
         });
+        EventBus.getInstance().addListener(EventTypes.FAVORITE_TRENDING_DATA_CHANGE, this.favoriteChangeListener = () => {
+            this.isFavoriteChanged = true;
+        });
+        EventBus.getInstance().addListener(EventTypes.BOTTOM_TAB_INDEX_CHANGE, this.bottomTabChangedListener = (data) => {
+            if (data.to === 1 && this.isFavoriteChanged) {
+                this.loadData(null, true);
+                this.isFavoriteChanged = false;
+            }
+        });
     }
 
     componentWillUnmount() {
         if (this.timeSpanChangeListener) {
             this.timeSpanChangeListener.remove();
         }
+        EventBus.getInstance().removeListener(this.favoriteChangeListener);
+        EventBus.getInstance().removeListener(this.bottomTabChangedListener);
     }
 
-    loadData(loadMore) {
-        const {onRefreshTrendingData, onLoadMoreTrendingData} = this.props;
+    loadData(loadMore, refreshFavorite) {
+        const {onRefreshTrendingData, onLoadMoreTrendingData, onFlushTrendingFavorite} = this.props;
         const store = this._store();
         const url = this.genURL(this.name);
         if (loadMore) {
@@ -180,6 +193,9 @@ class TrendingTab extends Component<Props> {
             onLoadMoreTrendingData(this.name, ++store.pageIndex, PAGE_SIZE, store.items, favoriteDao, () => {
                 this.showToast();
             });
+        } else if (refreshFavorite) {
+            // 刷新收藏状态
+            onFlushTrendingFavorite(this.name, store.pageIndex, PAGE_SIZE, store.items, favoriteDao);
         } else {
             // 下拉刷新
             onRefreshTrendingData(this.name, url, PAGE_SIZE, favoriteDao);
@@ -301,7 +317,10 @@ const mapDispatchToProps = dispatch => ({
     },
     onLoadMoreTrendingData: (name, pageIndex, pageSize, items, callback, favoriteDao) => {
         dispatch(actions.onLoadMoreTrending(name, pageIndex, pageSize, items, favoriteDao, callback))
-    }
+    },
+    onFlushTrendingFavorite: (name, pageIndex, pageSize, items, favoriteDao) => {
+        dispatch(actions.onFlushTrendingFavorite(name, pageIndex, pageSize, items, favoriteDao))
+    },
 });
 
 // connect 可跟任何子组件相互关联使用
